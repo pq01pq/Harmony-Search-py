@@ -66,21 +66,14 @@ class _Harmonizer(object):
         for key in pre_params.keys():
             new_params[key] = pre_params[key] if kwargs.get(key) is None else kwargs[key]
 
-        if self._is_init(**kwargs):
+        if kwargs.get('domain') is not None or kwargs.get('mem_size') is not None \
+                or kwargs.get('obj_func') is not None or kwargs.get('constraint_func') is not None:
             self.__init__(domain=new_params['domain'], mem_size=new_params['mem_size'],
                           obj_func=new_params['obj_func'], constraint_func=new_params['constraint_func'],
                           hmcr=new_params['hmcr'], par=new_params['par'], n_iter=new_params['n_iter'],
                           seed=new_params['seed'], maximize=new_params['maximize'])
-        elif self._is_reverse(**kwargs):
+        elif kwargs.get('maximize') is not None and kwargs['maximize'] != self.__maximize:
             self.memory.reverse()
-
-    @staticmethod
-    def _is_init(**kwargs):
-        return kwargs.get('domain') is not None or kwargs.get('mem_size') is not None \
-            or kwargs.get('obj_func') is not None or kwargs.get('constraint_func') is not None
-
-    def _is_reverse(self, **kwargs):
-        return kwargs.get('maximize') is not None and kwargs['maximize'] != self.__maximize
 
     def search(self):
         """

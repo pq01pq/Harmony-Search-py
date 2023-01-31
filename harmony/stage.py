@@ -53,15 +53,8 @@ class ContinuousHarmonizer(_Harmonizer):
             self.__memory.cost[i_mem] = self._calc_cost(new_members)
             i_mem += 1
 
-        # cost = np.array(
-        #     [self._calc_cost(memory[i_mem]) for i_mem in range(self.__memory.size)],
-        #     dtype=np.float32)
-
         # Sort in order by cost : O(lg(hm_size))
         self.__memory.sort(maximize=self.maximize)
-        # sort_order = cost.argsort()[::-1] if self.maximize else cost.argsort()
-        #
-        # self.__memory = self._Memory(memory=memory[sort_order], cost=cost[sort_order])
 
     def set(self, hmcr: float = None, par: float = None, n_iter: int = None,
             seed: int = None, maximize: bool = None, **kwargs):
@@ -178,15 +171,8 @@ class DiscreteHarmonizer(_Harmonizer):
             self.__memory.cost[i_mem] = self._calc_cost(new_var_indices)
             i_mem += 1
 
-        # cost = np.array(
-        #     [self._calc_cost(self.__memory[i_mem]) for i_mem in range(self.__memory.size)],
-        #     dtype=np.float32)
-
         # Sort in order by cost : O(lg(hm_size))
         self.__memory.sort(maximize=self.maximize)
-        # sort_order = cost.argsort()[::-1] if self.__maximize else cost.argsort()
-        #
-        # self.__memory = self._Memory(memory=self.__memory[sort_order], cost=cost[sort_order])
 
     def set(self, hmcr: float = None, par: float = None, n_iter: int = None,
             seed: int = None, maximize: bool = None, **kwargs):
