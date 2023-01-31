@@ -8,13 +8,6 @@ from numpy.random import RandomState
 
 
 class _Harmonizer(object):
-    __cost_dtype = np.float64
-
-    @classmethod
-    @property
-    def cost_dtype(cls):
-        return cls.__cost_dtype
-
     def __init__(self, obj_func: Callable[[list], float],
                  constraint_func: Callable[[list], bool], **kwargs):
         """
@@ -203,14 +196,21 @@ class _Harmonizer(object):
         pass
     ''' End magic methods '''
 
-    class _Memory(object):
+    class Memory(object):
+        __cost_dtype = np.float64
+
+        @classmethod
+        @property
+        def cost_dtype(cls):
+            return cls.__cost_dtype
+
         def __init__(self, size: int, n_var: int, dtype):
             self.__size = size if size is not None else 0
             self.__memory = np.array([
                 [0 for _ in range(n_var)] for _ in range(self.__size)
             ], dtype=dtype) if size * n_var > 0 else None
             self.__cost = np.array([0.0 for _ in range(self.__size)],
-                                   dtype=_Harmonizer.cost_dtype)
+                                   dtype=self.__cost_dtype)
 
         def insert(self, mem_idx, new_members, new_cost):
             self.__memory[mem_idx + 1:] = self.__memory[mem_idx:self.__size - 1]
@@ -245,7 +245,7 @@ class _Harmonizer(object):
         def __setitem__(self, *args):
             self.__memory[args[0]] = args[1]
 
-    class _Domain(object):
+    class Domain(object):
         def __init__(self, domain):
             self.__domain = domain if domain is not None else ()
             self.__n_var = len(domain) if domain is not None else 0

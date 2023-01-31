@@ -15,13 +15,6 @@ from ._chamber import (
 
 
 class ContinuousHarmonizer(_Harmonizer):
-    __memory_dtype = np.float32
-
-    @classmethod
-    @property
-    def mem_dtype(cls):
-        return cls.__memory_dtype
-
     def __init__(self, domain: list[list] = None, mem_size: int = 0,
                  obj_func: Callable[[list], float] = None,
                  constraint_func: Callable[[list], bool] = None, **kwargs):
@@ -32,7 +25,7 @@ class ContinuousHarmonizer(_Harmonizer):
         self.__init(domain=domain, mem_size=mem_size)
 
     def __init(self, domain, mem_size):
-        self.__memory = self._Memory(domain=self._Domain(domain=domain), size=mem_size)
+        self.__memory = self.Memory(domain=self.Domain(domain=domain), size=mem_size)
 
         if self.__memory.size < 1 or self.domain.n_var < 1 or self.obj_func is None:
             return
@@ -43,7 +36,7 @@ class ContinuousHarmonizer(_Harmonizer):
             new_members = np.array(
                 [self._random.uniform(self.domain[i_var, 0], self.domain[i_var, 1])
                  for i_var in range(self.domain.n_var)],
-                dtype=self.__memory_dtype)
+                dtype=self.Memory.dtype)
 
             # Check constraint (optional)
             if self._violate_constraint(new_members):
@@ -120,28 +113,28 @@ class ContinuousHarmonizer(_Harmonizer):
             )
         )
 
-    class _Memory(_Harmonizer._Memory):
-        def __init__(self, domain: ContinuousHarmonizer._Domain, size: int):
-            super().__init__(size=size, n_var=domain.n_var, dtype=ContinuousHarmonizer.mem_dtype)
+    class Memory(_Harmonizer.Memory):
+        __dtype = np.float32
+
+        @classmethod
+        @property
+        def dtype(cls):
+            return cls.__dtype
+
+        def __init__(self, domain: ContinuousHarmonizer.Domain, size: int):
+            super().__init__(size=size, n_var=domain.n_var, dtype=self.__dtype)
             self.__domain = domain
 
         @property
         def domain(self):
             return self.__domain
 
-    class _Domain(_Harmonizer._Domain):
+    class Domain(_Harmonizer.Domain):
         def __init__(self, domain):
             super().__init__(domain=domain)
 
 
 class DiscreteHarmonizer(_Harmonizer):
-    __memory_dtype = np.int32
-
-    @classmethod
-    @property
-    def mem_dtype(cls):
-        return cls.__memory_dtype
-
     def __init__(self, domain: list[list] = None, mem_size: int = 50,
                  obj_func: Callable[[list], float] = None,
                  constraint_func: Callable[[list], bool] = None, **kwargs):
@@ -151,7 +144,7 @@ class DiscreteHarmonizer(_Harmonizer):
         self.__init(domain=domain, mem_size=mem_size)
 
     def __init(self, domain, mem_size):
-        self.__memory = self._Memory(domain=self._Domain(domain=domain), size=mem_size)
+        self.__memory = self.Memory(domain=self.Domain(domain=domain), size=mem_size)
 
         if self.__memory.size < 1 or self.domain.n_var < 1 or self.obj_func is None:
             return
@@ -161,7 +154,7 @@ class DiscreteHarmonizer(_Harmonizer):
         while i_mem < self.__memory.size:
             new_var_indices = np.array(
                 [self._random.randint(0, self.domain.length(i_var)) for i_var in range(self.domain.n_var)],
-                dtype=self.__memory_dtype)
+                dtype=self.Memory.dtype)
 
             # Check constraint (optional)
             if self._violate_constraint(new_var_indices):
@@ -223,7 +216,7 @@ class DiscreteHarmonizer(_Harmonizer):
     def __str__(self):
         var_memory = np.array(
             [self.__memory.vars_by_indices(self.memory[i_mem]) for i_mem in range(self.__memory.size)],
-            dtype=ContinuousHarmonizer.mem_dtype
+            dtype=ContinuousHarmonizer.Memory.dtype
         )
         cost_memory = self.__memory.cost.reshape(-1, 1)
 
@@ -234,15 +227,22 @@ class DiscreteHarmonizer(_Harmonizer):
             )
         )
 
-    class _Memory(_Harmonizer._Memory):
-        def __init__(self, domain: DiscreteHarmonizer._Domain, size: int):
-            super().__init__(size=size, n_var=domain.n_var, dtype=DiscreteHarmonizer.mem_dtype)
+    class Memory(_Harmonizer.Memory):
+        __dtype = np.int32
+
+        @classmethod
+        @property
+        def dtype(cls):
+            return cls.__dtype
+
+        def __init__(self, domain: DiscreteHarmonizer.Domain, size: int):
+            super().__init__(size=size, n_var=domain.n_var, dtype=self.__dtype)
             self.__domain = domain
 
         def vars_by_indices(self, var_indices: list | np.ndarray):
             return np.array(
                 [self.var_by_index(i_var, var_indices[i_var]) for i_var in range(self.__domain.n_var)],
-                dtype=np.float32)
+                dtype=self.__dtype)
 
         def var_by_index(self, var_idx, idx_value):
             return self.__domain[var_idx, idx_value]
@@ -251,7 +251,7 @@ class DiscreteHarmonizer(_Harmonizer):
         def domain(self):
             return self.__domain
 
-    class _Domain(_Harmonizer._Domain):
+    class Domain(_Harmonizer.Domain):
         def __init__(self, domain):
             super().__init__(domain=domain)
             self.__domain_lengths = [len(self[i_var]) for i_var in range(self.n_var)]
