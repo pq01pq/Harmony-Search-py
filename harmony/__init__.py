@@ -7,7 +7,6 @@ from .stage import (
     split_interval
 )
 
-
 # from harmony import *
 __all__ = [
     # classes
