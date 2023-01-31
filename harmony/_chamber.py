@@ -14,7 +14,7 @@ class _Harmonizer(object):
         Base class for optimizers using HarmonySearch Search method.
         """
         # public
-        self.hmcr = kwargs['hmcr'] if kwargs.get('hmcr') is not None else 0.9
+        self.hmcr = kwargs['hmcr'] if kwargs.get('hmcr') is not None else 0.8
         self.par = kwargs['par'] if kwargs.get('par') is not None else 0.2
         self.n_iter = kwargs['n_iter'] if kwargs.get('n_iter') is not None else 1000
 
@@ -85,8 +85,6 @@ class _Harmonizer(object):
             if self._violate_constraint(new_members) \
                     or not self.maximize and new_cost > self.memory.cost[-1] \
                     or self.maximize and new_cost < self.memory.cost[-1]:
-                ''' For convergence test '''
-                min_costs.append(self.memory.cost[0])
                 continue
 
             # Insert new member order by cost
@@ -105,7 +103,7 @@ class _Harmonizer(object):
 
         ''' End iteration '''
 
-        solution = self.memory[0]
+        solution = self[0]
         return solution, min_costs
     ''' End search '''
 
@@ -121,17 +119,15 @@ class _Harmonizer(object):
         solutions = solution.reshape(1, self.domain.n_var)
 
         for i_mem in range(1, self.memory.size):
-            if not _equal(self.memory.cost[i_mem], self.memory.cost[0]):
+            if not _close(self.memory.cost[i_mem], self.memory.cost[0]):
                 break
 
-            var_set = self.memory[i_mem]
-            is_solution = True
+            var_set = self[i_mem]
+
             for i_sol in range(len(solutions)):
                 if _similar(var_set, solutions[i_sol]):
-                    is_solution = False
                     break
-
-            if is_solution:
+            else:
                 var_set = var_set.reshape(1, self.domain.n_var)
                 solutions = np.append(solutions, var_set, axis=0)
 
@@ -151,7 +147,6 @@ class _Harmonizer(object):
     def _violate_constraint(self, members):
         pass
 
-    ''' READ ONLY '''
     @property
     @abstractmethod
     def memory(self):
@@ -177,9 +172,7 @@ class _Harmonizer(object):
     @property
     def maximize(self):
         return self.__maximize
-    ''' End READ ONLY '''
 
-    ''' settable '''
     @property
     def seed(self):
         return self.__seed
@@ -188,13 +181,14 @@ class _Harmonizer(object):
     def seed(self, seed):
         self.__seed = seed
         self.__random.seed(seed)
-    ''' End settable '''
 
-    ''' magic methods '''
+    @abstractmethod
+    def __getitem__(self, *args):
+        pass
+
     @abstractmethod
     def __str__(self):
         pass
-    ''' End magic methods '''
 
     class Memory(object):
         __cost_dtype = np.float64
@@ -268,14 +262,14 @@ class _Harmonizer(object):
             return self.__n_var
 
         def __getitem__(self, *args):
+            if isinstance(args[0], int):
+                return self.__domain[args[0]]
             indices = args[0]
-            if isinstance(indices, int):
-                return self.__domain[indices]
             return self.__domain[indices[0]][indices[1]]
 
 
 def _similar(this, other):
-    return __float_compare(this, other, r_tol=np.finfo(np.float32).eps * 1000)
+    return __float_compare(this, other, r_tol=np.finfo(np.float32).eps * 10000)
 
 
 def _close(this, other):

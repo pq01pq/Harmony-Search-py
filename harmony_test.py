@@ -30,7 +30,7 @@ continuous_domain = [low, high]
 
 n_test = 10
 
-mem_size = 50
+mem_size = 100
 n_iter = 10000
 seed = None
 

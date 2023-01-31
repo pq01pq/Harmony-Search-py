@@ -105,6 +105,14 @@ class ContinuousHarmonizer(_Harmonizer):
     def domain(self):
         return self.__memory.domain
 
+    def __getitem__(self, *args):
+        if isinstance(args[0], int):
+            return self.__memory[args[0]]
+        indices = args[0]
+        if indices[1] == self.__memory.n_var:
+            return self.__memory.cost[indices[1]]
+        return self.__memory[indices[0], indices[1]]
+
     def __str__(self):
         return str(
             pd.DataFrame(
@@ -213,9 +221,17 @@ class DiscreteHarmonizer(_Harmonizer):
     def domain(self):
         return self.__memory.domain
 
+    def __getitem__(self, *args):
+        if isinstance(args[0], int):
+            return self.__memory.vars_by_indices(self.__memory[args[0]])
+        indices = args[0]
+        if indices[1] == self.__memory.n_var:
+            return self.__memory.cost[indices[1]]
+        return self.__memory.var_by_index(self.__memory[indices[0], indices[1]])
+
     def __str__(self):
         var_memory = np.array(
-            [self.__memory.vars_by_indices(self.memory[i_mem]) for i_mem in range(self.__memory.size)],
+            [self.__memory.vars_by_indices(self.__memory[i_mem]) for i_mem in range(self.__memory.size)],
             dtype=ContinuousHarmonizer.Memory.dtype
         )
         cost_memory = self.__memory.cost.reshape(-1, 1)
@@ -239,13 +255,13 @@ class DiscreteHarmonizer(_Harmonizer):
             super().__init__(size=size, n_var=domain.n_var, dtype=self.__dtype)
             self.__domain = domain
 
-        def vars_by_indices(self, var_indices: list | np.ndarray):
+        def vars_by_indices(self, domain_indices: list | np.ndarray):
             return np.array(
-                [self.var_by_index(i_var, var_indices[i_var]) for i_var in range(self.__domain.n_var)],
-                dtype=self.__dtype)
+                [self.__domain[i_var, domain_indices[i_var]] for i_var in range(self.__domain.n_var)],
+                dtype=ContinuousHarmonizer.Memory.dtype)
 
-        def var_by_index(self, var_idx, idx_value):
-            return self.__domain[var_idx, idx_value]
+        def var_by_index(self, var_idx, domain_idx):
+            return self.__domain[var_idx, domain_idx]
 
         @property
         def domain(self):
