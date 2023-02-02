@@ -130,7 +130,3 @@ if __name__ == '__main__':
                 print(f'cost :\n{obj_func(solution)}')
             print()
     print()
-
-    del os
-    del time
-    del np

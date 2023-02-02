@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="556e8118-15fa-4f45-b076-5854cea5bc79" name="Changes" comment="Inner class modified">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/etc_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/etc_test.py" afterDir="false" />
+    <list default="true" id="556e8118-15fa-4f45-b076-5854cea5bc79" name="Changes" comment="__main__ included in __init__.py">
       <change beforePath="$PROJECT_DIR$/harmony/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/harmony/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/harmony/_chamber.py" beforeDir="false" afterPath="$PROJECT_DIR$/harmony/_chamber.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/harmony/stage.py" beforeDir="false" afterPath="$PROJECT_DIR$/harmony/stage.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +175,14 @@
       <option name="project" value="LOCAL" />
       <updated>1675197408312</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="__main__ included in __init__.py">
+      <created>1675329030911</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1675329030911</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -195,6 +198,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Inner class modified" />
-    <option name="LAST_COMMIT_MESSAGE" value="Inner class modified" />
+    <MESSAGE value="__main__ included in __init__.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="__main__ included in __init__.py" />
   </component>
 </project>
