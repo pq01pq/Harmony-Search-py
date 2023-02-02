@@ -8,13 +8,13 @@ from ._chamber import (
     np,
 
     # Classes
-    _Harmonizer
+    Harmonizer
 
     # Functions
 )
 
 
-class ContinuousHarmonizer(_Harmonizer):
+class ContinuousHarmonizer(Harmonizer):
     def __init__(self, domain: list[list] = None, mem_size: int = 0,
                  obj_func: Callable[[list], float] = None,
                  constraint_func: Callable[[list], bool] = None, **kwargs):
@@ -64,18 +64,18 @@ class ContinuousHarmonizer(_Harmonizer):
         new_vars = []
         for i_var in range(self.domain.n_var):  # θ(n_var) : Not considerable
             # HarmonySearch memory consideration
-            if self._random.uniform() < self.hmcr:
+            if self._random.uniform(0, 1) < self.hmcr:
                 random_value = self.__memory[self._random.randint(0, self.__memory.size), i_var]
             else:
                 random_value = self._random.uniform(self.domain[i_var, 0], self.domain[i_var, 1])
             # Pitch adjusting (optional)
-            if self.par is not None and self._random.uniform() < self.par:
+            if self.par is not None and self._random.uniform(0, 1) < self.par:
                 bandwidth = self.__get_bandwidth(i_var)
 
                 increased_value = random_value + bandwidth
                 decreased_value = random_value - bandwidth
                 # If adjusted value get out of domain, adjust opposite way
-                if self._random.uniform() < 0.5:
+                if self._random.uniform(0, 1) < 0.5:
                     # Usually decreased
                     random_value = increased_value if decreased_value < self.domain[i_var, 0] \
                         else decreased_value
@@ -121,7 +121,7 @@ class ContinuousHarmonizer(_Harmonizer):
             )
         )
 
-    class Memory(_Harmonizer.Memory):
+    class Memory(Harmonizer.Memory):
         __dtype = np.float32
 
         @classmethod
@@ -137,12 +137,12 @@ class ContinuousHarmonizer(_Harmonizer):
         def domain(self):
             return self.__domain
 
-    class Domain(_Harmonizer.Domain):
+    class Domain(Harmonizer.Domain):
         def __init__(self, domain):
             super().__init__(domain=domain)
 
 
-class DiscreteHarmonizer(_Harmonizer):
+class DiscreteHarmonizer(Harmonizer):
     def __init__(self, domain: list[list] = None, mem_size: int = 50,
                  obj_func: Callable[[list], float] = None,
                  constraint_func: Callable[[list], bool] = None, **kwargs):
@@ -190,17 +190,17 @@ class DiscreteHarmonizer(_Harmonizer):
         new_var_indices = []
         for i_var in range(self.domain.n_var):  # θ(n_var) : Not considerable
             # HarmonySearch memory consideration
-            if self._random.uniform() < self.hmcr:
+            if self._random.uniform(0, 1) < self.hmcr:
                 random_index = self.__memory[self._random.randint(0, self.__memory.size), i_var]
             else:
                 random_index = self._random.randint(0, self.domain.length(i_var))
 
             # Pitch adjusting (optional)
-            if self.par is not None and self._random.uniform() < self.par:
+            if self.par is not None and self._random.uniform(0, 1) < self.par:
                 increased_index = random_index + 1
                 decreased_index = random_index - 1
                 # If adjusted value get out of domain, adjust opposite way
-                if self._random.uniform() < 0.5:
+                if self._random.uniform(0, 1) < 0.5:
                     # Usually decreased
                     random_index = increased_index if decreased_index < 0 \
                         else decreased_index
@@ -243,7 +243,7 @@ class DiscreteHarmonizer(_Harmonizer):
             )
         )
 
-    class Memory(_Harmonizer.Memory):
+    class Memory(Harmonizer.Memory):
         __dtype = np.int32
 
         @classmethod
@@ -267,7 +267,7 @@ class DiscreteHarmonizer(_Harmonizer):
         def domain(self):
             return self.__domain
 
-    class Domain(_Harmonizer.Domain):
+    class Domain(Harmonizer.Domain):
         def __init__(self, domain):
             super().__init__(domain=domain)
             self.__domain_lengths = [len(self[i_var]) for i_var in range(self.n_var)]

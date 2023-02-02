@@ -1,10 +1,17 @@
 import os
+import typing
 import warnings
 from sys import float_info
 import math
 import random
 import numpy as np
+import pandas as pd
 from numpy.random import RandomState
+# from sklearn.model_selection import train_test_split
+# from keras.models import Sequential
+# from keras.layers.core import Dense
+# from keras.layers import activation
+# from keras import optimizers
 
 
 # class NonTest:
@@ -12,80 +19,40 @@ from numpy.random import RandomState
 #         print(kwagrs.get('test1'))
 #         print(kwagrs.get('test2'))
 
-class Duple(tuple):
 
-    _dtype = tuple
+def __domain_dimension(domain, n_dim):
+    if not hasattr(domain, '__iter__'):
+        return n_dim
 
-    def __init__(self, *args):
-        super().__init__(self=args)
-
-
-def f(i, j=1, **kwargs):
-    print(kwargs)
-    print(*kwargs)
-    print(type(**kwargs))
-
-
-class Kwarg:
-    def __init__(self, a=1, **kwargs):
-        self.a = a
-        self.b = kwargs['b']
-
-    def __getitem__(self, *args, **kwargs):
-        print(args)
-        print(kwargs)
-
-    def __setitem__(self, *args, **kwargs):
-        print(args)
-        print(kwargs)
+    max_sub_dim = 0
+    for sub_domain in domain:
+        sub_dim = __domain_dimension(sub_domain, n_dim + 1)
+        if max_sub_dim < sub_dim:
+            max_sub_dim = sub_dim
+    return max_sub_dim
 
 
-k = Kwarg(b=1, a=10)
-print(k.a, k.b)
-a = k[1, 2, 3]
-a = k[:, :, :]
-k[1, 2, 3] = 4
-k[:, :, :] = 4
-a = k[(1, 2)]
+s = pd.Series([1, 2])
+d = pd.DataFrame(
+    data=[
+        [1, 2, 3, np.NAN],
+        [1, np.NAN, 2, 3]
+    ],
+    columns=['1', '2', '3', '4']
+)
 
-# class MyRand:
-#     def __init__(self, seed):
-#         self.__seed = seed
-#         self.__rand = RandomState(seed)
-#
-#     def rand(self):
-#         return self.__rand.rand()
-#
-#     @property
-#     def seed(self):
-#         return self.__seed
-#
-#     @seed.setter
-#     def seed(self, seed):
-#         self.__seed = seed
-#         self.__rand.seed(seed)
+boool = pd.DataFrame(
+    data=[
+        [True, True, True, False],
+        [True, True, False, False],
+        [True, False, False, False],
+    ],
+    columns=['1', '2', '3', '4']
+)
+print(boool[['1', '2']])
 
-# d = {'1': 1}
-# print(d.get('2'))
-# print(d['2'])
+# seq = Sequential()
+# lay = Dense()
+# optimizers.Adam()
+# seq.compile(keras.metrics)
 
-# li1 = [1.0, 2]
-# li2 = [3, 4]
-# li3 = [5, 6]
-# li = np.vstack([li1, li2, li3])
-# print(np.array([_li for _li in li[0:2, 0]]))
-# print(issubclass(np.int_, int))
-
-# arr = np.array([[1, 2], [3, 4]])
-# arr.__setitem__((0, 0), 4, 2)
-# print(arr)
-
-# m = np.array([
-#     [1 for _ in range(2)] for _ in range(3)
-# ])
-# print(m[[0, 0]])
-
-# tup = (
-#     (1, 2),
-#     (3, 4)
-# )

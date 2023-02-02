@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Callable
+from typing import Callable, Iterable
 
 import numpy as np
 from numpy.random import RandomState
 
 
-class _Harmonizer(object):
-    def __init__(self, obj_func: Callable[[list], float],
-                 constraint_func: Callable[[list], bool], **kwargs):
+class Harmonizer(object):
+    def __init__(self, obj_func: Callable[[Iterable], float],
+                 constraint_func: Callable[[Iterable], bool], **kwargs):
         """
         Base class for optimizers using HarmonySearch Search method.
         """
@@ -242,20 +242,40 @@ class _Harmonizer(object):
     class Domain(object):
         def __init__(self, domain):
             self.__domain = domain if domain is not None else ()
-            self.__n_var = len(domain) if domain is not None else 0
+            try:
+                self.__n_var = len(domain) if domain is not None else 0
+            except AttributeError:
+                self.__n_var = 0
 
-            if self.__n_var < 1:
+            if self.__n_var < 1 or self.__domain_dimension(self.__domain) != 2:
                 return
 
             for i_var in range(self.__n_var):
-                if isinstance(self.__domain[i_var], np.ndarray):
-                    self.__domain[i_var] = np.array(self.__domain[i_var]).flatten()
-                elif isinstance(self.__domain[i_var], tuple):
+                if isinstance(self.__domain[i_var], tuple):
                     self.__domain[i_var] = list(self.__domain[i_var])
+                else:
+                    try:
+                        import numpy as np
+                        if isinstance(self.__domain[i_var], np.ndarray):
+                            self.__domain[i_var] = np.array(self.__domain[i_var]).flatten()
+                        del np
+                    except ImportError:
+                        pass
 
                 self.__domain[i_var].sort()
 
             self.__domain = tuple(self.__domain)
+
+        def __domain_dimension(self, domain, n_dim: int = 0):
+            if not isinstance(domain, Iterable):
+                return n_dim
+
+            max_sub_dim = 0
+            for sub_domain in domain:
+                sub_dim = self.__domain_dimension(sub_domain, n_dim + 1)
+                if max_sub_dim < sub_dim:
+                    max_sub_dim = sub_dim
+            return max_sub_dim
 
         @property
         def n_var(self):
