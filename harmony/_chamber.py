@@ -141,7 +141,7 @@ class Harmonizer(object):
 
     ''' helper methods '''
     def __check_state(self):
-        assigned_dim = self.domain.dimension()
+        assigned_dim = self.domain.dimension
         if assigned_dim != 2:
             raise DimensionException(assigned_dim=assigned_dim)
         if self.domain.n_var < 1:
@@ -279,7 +279,8 @@ class Harmonizer(object):
 
             self.__domain = tuple(self.__domain)
 
-        def dimension(self, n_dim: int = 0):
+        @property
+        def dimension(self):
             return self.__dimension(domain=self.__domain)
 
         def __dimension(self, domain, n_dim: int = 0):

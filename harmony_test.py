@@ -33,7 +33,6 @@ seed = None
 multiple = 1
 multiple = False if multiple == 0 else True
 
-# print(np.isclose(3.141935, 3.141816, rtol=np.finfo(np.float32).eps * 1000))
 domain = [
     continuous_domain,
     continuous_domain
