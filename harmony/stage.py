@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Iterable
+
 import pandas as pd
 
 from ._chamber import (
@@ -16,8 +18,8 @@ from ._chamber import (
 
 class ContinuousHarmonizer(Harmonizer):
     def __init__(self, domain: list[list] = None, mem_size: int = 0,
-                 obj_func: Callable[[list], float] = None,
-                 constraint_func: Callable[[list], bool] = None, **kwargs):
+                 obj_func: Callable[[Iterable], float] = None,
+                 constraint_func: Callable[[Iterable], bool] = None, **kwargs):
         super().__init__(obj_func=obj_func, constraint_func=constraint_func, **kwargs)
 
         self.__memory = None
@@ -144,8 +146,8 @@ class ContinuousHarmonizer(Harmonizer):
 
 class DiscreteHarmonizer(Harmonizer):
     def __init__(self, domain: list[list] = None, mem_size: int = 50,
-                 obj_func: Callable[[list], float] = None,
-                 constraint_func: Callable[[list], bool] = None, **kwargs):
+                 obj_func: Callable[[Iterable], float] = None,
+                 constraint_func: Callable[[Iterable], bool] = None, **kwargs):
         super().__init__(obj_func=obj_func, constraint_func=constraint_func, **kwargs)
         self.__memory = None
 

@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import Callable, Iterable
 
+from ._disonance import *
+
 import numpy as np
 from numpy.random import RandomState
 
@@ -43,7 +45,7 @@ class Harmonizer(object):
             'maximize': self.__maximize
         }
         new_params = {
-            #public
+            # public
             'hmcr': hmcr,
             'par': par,
             'n_iter': n_iter,
@@ -72,6 +74,9 @@ class Harmonizer(object):
         """
         Search for minimum cost solutions for given domain.
         """
+        self.__check_state()
+        for i in self.domain:
+            pass
 
         ''' For convergence test '''
         min_costs = [self.memory.cost[0]]
@@ -135,6 +140,15 @@ class Harmonizer(object):
     ''' End multiple search '''
 
     ''' helper methods '''
+    def __check_state(self):
+        assigned_dim = self.domain.dimension()
+        if assigned_dim != 2:
+            raise DimensionException(assigned_dim=assigned_dim)
+        if self.domain.n_var < 1:
+            raise DegreeException
+        if self.memory.size < 1:
+            raise MemoryException
+
     @abstractmethod
     def _calc_cost(self, members):
         pass
@@ -203,8 +217,9 @@ class Harmonizer(object):
             self.__memory = np.array([
                 [0 for _ in range(n_var)] for _ in range(self.__size)
             ], dtype=dtype) if size * n_var > 0 else None
-            self.__cost = np.array([0.0 for _ in range(self.__size)],
-                                   dtype=self.__cost_dtype)
+            self.__cost = np.array(
+                [0.0 for _ in range(self.__size)], dtype=self.__cost_dtype
+            ) if size * n_var > 0 else None
 
         def insert(self, mem_idx, new_members, new_cost):
             self.__memory[mem_idx + 1:] = self.__memory[mem_idx:self.__size - 1]
@@ -239,16 +254,13 @@ class Harmonizer(object):
         def __setitem__(self, *args):
             self.__memory[args[0]] = args[1]
 
-    class Domain(object):
+    class Domain(Iterable):
         def __init__(self, domain):
             self.__domain = domain if domain is not None else ()
             try:
                 self.__n_var = len(domain) if domain is not None else 0
             except AttributeError:
                 self.__n_var = 0
-
-            if self.__n_var < 1 or self.__domain_dimension(self.__domain) != 2:
-                return
 
             for i_var in range(self.__n_var):
                 if isinstance(self.__domain[i_var], tuple):
@@ -263,16 +275,22 @@ class Harmonizer(object):
                         pass
 
                 self.__domain[i_var].sort()
+                self.__domain[i_var] = tuple(self.__domain[i_var])
 
             self.__domain = tuple(self.__domain)
 
-        def __domain_dimension(self, domain, n_dim: int = 0):
+        def dimension(self, n_dim: int = 0):
+            return self.__dimension(domain=self.__domain)
+
+        def __dimension(self, domain, n_dim: int = 0):
             if not isinstance(domain, Iterable):
                 return n_dim
+            if self.n_var < 1:
+                return n_dim + 1
 
             max_sub_dim = 0
             for sub_domain in domain:
-                sub_dim = self.__domain_dimension(sub_domain, n_dim + 1)
+                sub_dim = self.__dimension(domain=sub_domain, n_dim=n_dim + 1)
                 if max_sub_dim < sub_dim:
                     max_sub_dim = sub_dim
             return max_sub_dim
@@ -286,6 +304,9 @@ class Harmonizer(object):
                 return self.__domain[args[0]]
             indices = args[0]
             return self.__domain[indices[0]][indices[1]]
+
+        def __iter__(self):
+            return self.__domain.__iter__()
 
 
 def _similar(this, other):
