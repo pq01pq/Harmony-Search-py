@@ -75,8 +75,6 @@ class Harmonizer(object):
         Search for minimum cost solutions for given domain.
         """
         self.__check_state()
-        for i in self.domain:
-            pass
 
         ''' For convergence test '''
         min_costs = [self.memory.cost[0]]
@@ -256,34 +254,26 @@ class Harmonizer(object):
 
     class Domain(Iterable):
         def __init__(self, domain):
-            self.__domain = domain if domain is not None else ()
+            self.__domain = domain
             try:
                 self.__n_var = len(domain) if domain is not None else 0
             except AttributeError:
                 self.__n_var = 0
+            self.__dimension = self.__dimension_of(domain=domain)
+
+            if self.__domain is None:
+                return
 
             for i_var in range(self.__n_var):
                 if isinstance(self.__domain[i_var], tuple):
                     self.__domain[i_var] = list(self.__domain[i_var])
-                else:
-                    try:
-                        import numpy as np
-                        if isinstance(self.__domain[i_var], np.ndarray):
-                            self.__domain[i_var] = np.array(self.__domain[i_var]).flatten()
-                        del np
-                    except ImportError:
-                        pass
 
                 self.__domain[i_var].sort()
                 self.__domain[i_var] = tuple(self.__domain[i_var])
 
             self.__domain = tuple(self.__domain)
 
-        @property
-        def dimension(self):
-            return self.__dimension(domain=self.__domain)
-
-        def __dimension(self, domain, n_dim: int = 0):
+        def __dimension_of(self, domain, n_dim: int = 0):
             if not isinstance(domain, Iterable):
                 return n_dim
             if self.n_var < 1:
@@ -291,7 +281,7 @@ class Harmonizer(object):
 
             max_sub_dim = 0
             for sub_domain in domain:
-                sub_dim = self.__dimension(domain=sub_domain, n_dim=n_dim + 1)
+                sub_dim = self.__dimension_of(domain=sub_domain, n_dim=n_dim + 1)
                 if max_sub_dim < sub_dim:
                     max_sub_dim = sub_dim
             return max_sub_dim
@@ -299,6 +289,10 @@ class Harmonizer(object):
         @property
         def n_var(self):
             return self.__n_var
+
+        @property
+        def dimension(self):
+            return self.__dimension
 
         def __getitem__(self, *args):
             if isinstance(args[0], int):
