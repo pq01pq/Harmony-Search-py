@@ -67,7 +67,7 @@ class Harmonizer(object):
                           obj_func=new_params['obj_func'], constraint_func=new_params['constraint_func'],
                           hmcr=new_params['hmcr'], par=new_params['par'], n_iter=new_params['n_iter'],
                           seed=new_params['seed'], maximize=new_params['maximize'])
-        elif kwargs.get('maximize') is not None and kwargs['maximize'] != self.__maximize:
+        elif maximize is not None and maximize != self.__maximize:
             self.memory.reverse()
 
     def search(self):
