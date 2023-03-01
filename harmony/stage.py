@@ -51,10 +51,6 @@ class ContinuousHarmonizer(Harmonizer):
         # Sort in order by cost : O(lg(hm_size))
         self.__memory.sort(maximize=self.maximize)
 
-    def set(self, hmcr: float = None, par: float = None, n_iter: int = None,
-            seed: int = None, maximize: bool = None, **kwargs):
-        super().set(hmcr=hmcr, par=par, n_iter=n_iter, seed=seed, maximize=maximize, **kwargs)
-
     def _calc_cost(self, members):
         return self.obj_func(members)
 
@@ -176,10 +172,6 @@ class DiscreteHarmonizer(Harmonizer):
 
         # Sort in order by cost : O(lg(hm_size))
         self.__memory.sort(maximize=self.maximize)
-
-    def set(self, hmcr: float = None, par: float = None, n_iter: int = None,
-            seed: int = None, maximize: bool = None, **kwargs):
-        super().set(hmcr=hmcr, par=par, n_iter=n_iter, seed=seed, maximize=maximize, **kwargs)
 
     def _calc_cost(self, members):
         return self.obj_func(self.__memory.vars_by_indices(members))

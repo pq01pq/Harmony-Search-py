@@ -27,8 +27,8 @@ class Harmonizer(object):
         self.__random = RandomState(self.__seed)
         self.__maximize = kwargs['maximize'] if kwargs.get('maximize') is not None else False
 
-    def set(self, hmcr: float, par: float, n_iter: int,
-            seed: int, maximize: bool, **kwargs):
+    def set(self, hmcr: float = None, par: float = None, n_iter: int = None,
+            seed: int = None, maximize: bool = None, **kwargs):
         # Preserve previous params and assign new parameters
         pre_params = {
             # public
