@@ -17,7 +17,7 @@ from ._chamber import (
 
 
 class ContinuousHarmonizer(Harmonizer):
-    def __init__(self, domain: list[list] = None, mem_size: int = 0,
+    def __init__(self, domain: Iterable[Iterable] = None, mem_size: int = 0,
                  obj_func: Callable[[Iterable], float] = None,
                  constraint_func: Callable[[Iterable], bool] = None, **kwargs):
         super().__init__(obj_func=obj_func, constraint_func=constraint_func, **kwargs)
@@ -141,7 +141,7 @@ class ContinuousHarmonizer(Harmonizer):
 
 
 class DiscreteHarmonizer(Harmonizer):
-    def __init__(self, domain: list[list] = None, mem_size: int = 50,
+    def __init__(self, domain: Iterable[Iterable] = None, mem_size: int = 50,
                  obj_func: Callable[[Iterable], float] = None,
                  constraint_func: Callable[[Iterable], bool] = None, **kwargs):
         super().__init__(obj_func=obj_func, constraint_func=constraint_func, **kwargs)
@@ -249,7 +249,7 @@ class DiscreteHarmonizer(Harmonizer):
             super().__init__(size=size, n_var=domain.n_var, dtype=self.__dtype)
             self.__domain = domain
 
-        def vars_by_indices(self, domain_indices: list | np.ndarray):
+        def vars_by_indices(self, domain_indices: Iterable):
             return np.array(
                 [self.__domain[i_var, domain_indices[i_var]] for i_var in range(self.__domain.n_var)],
                 dtype=ContinuousHarmonizer.Memory.dtype)

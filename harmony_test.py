@@ -41,7 +41,7 @@ for i_test in range(n_test):
     t0 = time.time()
     harmony = ContinuousHarmonizer()
     harmony.set(domain=domain, mem_size=mem_size, obj_func=obj_func,
-                hmcr=hmcr, par=par, n_iter=n_iter, seed=seed)
+                hmcr=hmcr, par=par, epoch=n_iter, seed=seed)
     solution, min_costs = harmony.multiple_search() if multiple else harmony.search()
     t1 = time.time()
     print(f'Δt : {(t1 - t0) * 1000:.3f} ms')
@@ -64,7 +64,7 @@ for i_test in range(n_test):
     t0 = time.time()
     harmony = DiscreteHarmonizer()
     harmony.set(domain=domain, mem_size=mem_size, obj_func=obj_func,
-                hmcr=hmcr, par=par, n_iter=n_iter, seed=seed)
+                hmcr=hmcr, par=par, epoch=n_iter, seed=seed)
     solution, min_costs = harmony.multiple_search() if multiple else harmony.search()
     t1 = time.time()
     print(f'Δt : {(t1 - t0) * 1000:.3f} ms')

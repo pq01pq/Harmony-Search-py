@@ -13,12 +13,12 @@ class Harmonizer(object):
     def __init__(self, obj_func: Callable[[Iterable], float],
                  constraint_func: Callable[[Iterable], bool], **kwargs):
         """
-        Base class for optimizers using HarmonySearch Search method.
+        Base class for optimizers using Harmony Search method.
         """
         # public
         self.hmcr = kwargs['hmcr'] if kwargs.get('hmcr') is not None else 0.8
         self.par = kwargs['par'] if kwargs.get('par') is not None else 0.2
-        self.n_iter = kwargs['n_iter'] if kwargs.get('n_iter') is not None else 1000
+        self.epoch = kwargs['epoch'] if kwargs.get('epoch') is not None else 1000
 
         # private
         self.__obj_func = obj_func
@@ -27,14 +27,14 @@ class Harmonizer(object):
         self.__random = RandomState(self.__seed)
         self.__maximize = kwargs['maximize'] if kwargs.get('maximize') is not None else False
 
-    def set(self, hmcr: float = None, par: float = None, n_iter: int = None,
-            seed: int = None, maximize: bool = None, **kwargs):
+    def set(self, hmcr: float = 0.8, par: float = 0.2, epoch: int = 1000,
+            seed: int = None, maximize: bool = False, **kwargs):
         # Preserve previous params and assign new parameters
         pre_params = {
             # public
             'hmcr': self.hmcr,
             'par': self.par,
-            'n_iter': self.n_iter,
+            'epoch': self.epoch,
 
             # private
             'domain': self.domain[:] if self.domain.n_var > 0 else (),
@@ -48,7 +48,7 @@ class Harmonizer(object):
             # public
             'hmcr': hmcr,
             'par': par,
-            'n_iter': n_iter,
+            'epoch': epoch,
 
             # private
             'domain': kwargs.get('domain'),
@@ -65,7 +65,7 @@ class Harmonizer(object):
                 or kwargs.get('obj_func') is not None or kwargs.get('constraint_func') is not None:
             self.__init__(domain=new_params['domain'], mem_size=new_params['mem_size'],
                           obj_func=new_params['obj_func'], constraint_func=new_params['constraint_func'],
-                          hmcr=new_params['hmcr'], par=new_params['par'], n_iter=new_params['n_iter'],
+                          hmcr=new_params['hmcr'], par=new_params['par'], epoch=new_params['epoch'],
                           seed=new_params['seed'], maximize=new_params['maximize'])
         elif maximize is not None and maximize != self.__maximize:
             self.memory.reverse()
@@ -81,7 +81,7 @@ class Harmonizer(object):
 
         ''' Iteration start '''
         epoch = 0
-        while epoch < self.n_iter:  # O(n_iter * hm_size)
+        while epoch < self.epoch:  # O(epoch * hm_size)
             new_members = self._select_members()
             new_cost = self._calc_cost(new_members)
 
