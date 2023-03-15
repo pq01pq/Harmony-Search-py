@@ -297,8 +297,10 @@ class Harmonizer(object):
         def __getitem__(self, *args):
             if isinstance(args[0], int):
                 return self.__domain[args[0]]
-            indices = args[0]
-            return self.__domain[indices[0]][indices[1]]
+            if isinstance(args[0], tuple):
+                indices = args[0]
+                return self.__domain[indices[0]][indices[1]]
+            return self.__domain[args[0]]
 
         def __iter__(self):
             return self.__domain.__iter__()

@@ -3,13 +3,15 @@ import time
 import numpy as np
 from harmony import *
 
-
-def rosenbrock(var):
-    return 100 * (var[0]**2 - var[1])**2 + (1 - var[0])**2
+from typing import Iterable
 
 
-def wave(var):
-    return np.cos(var[0]) + np.cos(var[1])
+def rosenbrock(x: Iterable) -> float:
+    return 100 * (x[0]**2 - x[1])**2 + (1 - x[0])**2
+
+
+def wave(x: Iterable) -> float:
+    return np.cos(x[0]) + np.cos(x[1])
 
 
 # def constraint(var):
@@ -25,7 +27,7 @@ continuous_domain = [low, high]
 n_test = 10
 
 mem_size = 100
-n_iter = 10000
+epoch = 10000
 hmcr = 0.9
 par = 0.2
 seed = None
@@ -37,11 +39,11 @@ domain = [
     continuous_domain,
     continuous_domain
 ]
+
 for i_test in range(n_test):
     t0 = time.time()
-    harmony = ContinuousHarmonizer()
-    harmony.set(domain=domain, mem_size=mem_size, obj_func=obj_func,
-                hmcr=hmcr, par=par, epoch=n_iter, seed=seed)
+    harmony = ContinuousHarmonizer(domain=domain, mem_size=mem_size, obj_func=obj_func)
+    harmony.set(hmcr=hmcr, par=par, epoch=epoch, seed=seed)
     solution, min_costs = harmony.multiple_search() if multiple else harmony.search()
     t1 = time.time()
     print(f'Δt : {(t1 - t0) * 1000:.3f} ms')
@@ -62,9 +64,8 @@ domain = [
 ]
 for i_test in range(n_test):
     t0 = time.time()
-    harmony = DiscreteHarmonizer()
-    harmony.set(domain=domain, mem_size=mem_size, obj_func=obj_func,
-                hmcr=hmcr, par=par, epoch=n_iter, seed=seed)
+    harmony = DiscreteHarmonizer(domain=domain, mem_size=mem_size, obj_func=obj_func)
+    harmony.set(hmcr=hmcr, par=par, epoch=epoch, seed=seed)
     solution, min_costs = harmony.multiple_search() if multiple else harmony.search()
     t1 = time.time()
     print(f'Δt : {(t1 - t0) * 1000:.3f} ms')

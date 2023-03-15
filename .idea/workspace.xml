@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="556e8118-15fa-4f45-b076-5854cea5bc79" name="Changes" comment="set method treated">
+    <list default="true" id="556e8118-15fa-4f45-b076-5854cea5bc79" name="Changes" comment="default parameter set">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/harmony/_chamber.py" beforeDir="false" afterPath="$PROJECT_DIR$/harmony/_chamber.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/harmony/stage.py" beforeDir="false" afterPath="$PROJECT_DIR$/harmony/stage.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/harmony_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/harmony_test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -228,7 +227,14 @@
       <option name="project" value="LOCAL" />
       <updated>1677685852268</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="default parameter set">
+      <created>1678842726480</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1678842726480</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -248,6 +254,7 @@
     <MESSAGE value="exception assigned" />
     <MESSAGE value="set method merged" />
     <MESSAGE value="set method treated" />
-    <option name="LAST_COMMIT_MESSAGE" value="set method treated" />
+    <MESSAGE value="default parameter set" />
+    <option name="LAST_COMMIT_MESSAGE" value="default parameter set" />
   </component>
 </project>
